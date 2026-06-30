@@ -1,0 +1,6 @@
+{
+  "name": "Music Band Website",
+  "description": "An interactive, fully responsive music band website featuring a dynamic home experience, tour dates booking, immersive discography with album trivia quizzes, an integrated merch store with a shopping cart, music lesson booking, and an active band blog.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
