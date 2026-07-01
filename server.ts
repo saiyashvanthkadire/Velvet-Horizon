@@ -550,7 +550,7 @@ Rules:
       }
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.0-flash',
         contents,
         config: {
           systemInstruction: CHATBOT_SYSTEM_INSTRUCTION,
