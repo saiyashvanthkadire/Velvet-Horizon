@@ -6,7 +6,6 @@ import { users, purchasedTickets, lessonBookings, blogComments, blogLikes, cartI
 import { getOrCreateUser } from './src/db/users.ts';
 import { requireAuth, AuthRequest } from './src/middleware/auth.ts';
 import { eq, and, desc } from 'drizzle-orm';
-import { GoogleGenAI } from '@google/genai';
 
 async function startServer() {
   const app = express();
@@ -477,91 +476,6 @@ async function startServer() {
     } catch (error: any) {
       console.error('Error deleting lesson booking:', error);
       res.status(500).json({ error: 'Failed to delete lesson booking' });
-    }
-  });
-
-  // 8. Gemini Chatbot Endpoint
-  let aiClient: GoogleGenAI | null = null;
-  function getGeminiClient() {
-    if (!aiClient) {
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        throw new Error('Please add your GEMINI_API_KEY in the Secrets panel (Settings > Secrets) to enable Aura, the AI companion.');
-      }
-      aiClient = new GoogleGenAI({
-        apiKey,
-        httpOptions: {
-          headers: {
-            'User-Agent': 'aistudio-build',
-          }
-        }
-      });
-    }
-    return aiClient;
-  }
-
-  const CHATBOT_SYSTEM_INSTRUCTION = `You are Aura, the official AI Companion and Tour Guide for the indie-synth/rock band "Velvet Horizon".
-Your tone is warm, enthusiastic, slightly futuristic, and always welcoming to fans and newcomers.
-
-Band Details:
-- Velvet Horizon is an indie-electronic synth-rock band formed in 2016.
-- Members:
-  - Julian: Plays synthesizers, keys, production, and offers modular synthesis & keyboard lessons.
-  - Elena: Lead vocals, guitars, lyricist, and offers delay guitar techniques & alternative tuning lessons.
-- Sound: Known for warm analog synth textures, nostalgic 80s reverb, and driving rhythmic beats.
-
-Your job is to answer questions about the band, their albums, tour schedule, merchandise, tutoring lessons, and FAQs:
-- Suggest specific tracks or albums from their discography (Elysian Fields, Decade of Resonance, Retrograde).
-- Help fans choose items from the merch store (apparel, vinyl/cassette/CD formats, accessories like enamel pins or glass slides).
-- Tell them about tour dates and encourage booking tickets.
-- Encourage them to book music tutoring lessons with Elena or Julian.
-- Answer support questions (FAQ information): general band info, ticket age limits (all ages except Berlin which is 18+), refund policies (full refunds up to 48h before the show), international shipping (takes 7-14 business days), etc.
-
-Rules:
-- Speak as a direct representative/assistant of the band.
-- Be concise and keep responses highly engaging, conversational, and helpful.
-- Format your replies nicely using markdown (bolding, lists, italics).
-- If asked about things completely unrelated to Velvet Horizon, politely redirect them back to the band's universe.
-- Feel free to recommend actual merchandise or concert venues based on the user's preferences.`;
-
-  app.post('/api/chat', async (req, res) => {
-    const { messages } = req.body;
-    if (!Array.isArray(messages)) {
-      return res.status(400).json({ error: 'Messages array is required.' });
-    }
-
-    try {
-      const ai = getGeminiClient();
-      
-      // Map frontend messages into the format required by @google/genai
-      let contents = messages.map((m: any) => ({
-        role: m.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: m.content }]
-      }));
-
-      // Gemini API Chat requires the conversation to start with a 'user' turn.
-      // Remove any leading model/assistant messages.
-      while (contents.length > 0 && contents[0].role === 'model') {
-        contents.shift();
-      }
-
-      if (contents.length === 0) {
-        return res.json({ reply: "Hi! I'm ready to chat. Ask me anything about Velvet Horizon!" });
-      }
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
-        contents,
-        config: {
-          systemInstruction: CHATBOT_SYSTEM_INSTRUCTION,
-        },
-      });
-
-      const reply = response.text || "I'm sorry, I couldn't generate a response. Please try again!";
-      res.json({ reply });
-    } catch (error: any) {
-      console.error('Error in Gemini Chatbot API:', error);
-      res.status(500).json({ error: error.message || 'Gemini API call failed' });
     }
   });
 

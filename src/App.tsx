@@ -17,7 +17,6 @@ import PhotoGallery from './components/PhotoGallery';
 import Login from './components/Login';
 import Admin from './components/Admin';
 import MiniMusicPlayer from './components/MiniMusicPlayer';
-import GeminiChatbot from './components/GeminiChatbot';
 import ShareModal from './components/ShareModal';
 import FooterSocialIcon from './components/FooterSocialIcon';
 
@@ -996,9 +995,6 @@ export default function App() {
 
       {/* 6. Persistent Mini Music Player */}
       <MiniMusicPlayer />
-
-      {/* 7. Gemini Chatbot Companion */}
-      <GeminiChatbot theme={theme} />
 
       {/* Share Modal Overlay */}
       <ShareModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} theme={theme} />
