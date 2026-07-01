@@ -55,6 +55,24 @@ Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
    ```
 
 ### Running in Development
+
+This project uses `tsx` to automatically load environment variables from a `.env` file for development.
+
+1.  Create a copy of the `.env.example` file and name it `.env`.
+2.  Open the new `.env` file and add your `GEMINI_API_KEY`.
+
+   ```.env
+   GEMINI_API_KEY="YOUR_API_KEY_HERE"
+   ```
+
+### Troubleshooting Environment Variables
+
+If you see an error that `GEMINI_API_KEY` is not found when starting the server:
+
+1.  **Restart the Server**: Any changes to the `.env` file require you to stop (`Ctrl+C`) and restart the development server (`npm run dev`).
+2.  **Check File Name and Location**: Ensure the file is named exactly `.env` (with the leading dot) and is in the project's root directory (the same folder as `package.json`).
+3.  **Check Variable Name**: Make sure the variable inside the `.env` file is spelled `GEMINI_API_KEY`.
+
 Start the local development server:
 ```bash
 npm run dev
